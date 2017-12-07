@@ -25,12 +25,15 @@ io.on('connection', function(client){
         
         if(!api[apiName]) return false;        
         callback({
-            message: `method ${apiName} founded, run ${apiName}(${JSON.stringify(arg)})`
+            message: `method ${apiName} founded,
+             run ${apiName}(${JSON.stringify(arg)})`
+            
         });
                
         let answer = await api[apiName](arg);   
         callback({
-            message: `${apiName}(${JSON.stringify(arg)}) return answer before ${+ new Date() - startTime}ms`
+            message: `command "${apiName}(${JSON.stringify(arg)})" 
+            return answer before ${+ new Date() - startTime}ms`
         });
         return answer;
     });
@@ -52,7 +55,7 @@ io.on('from-server', pr.getReceiver());
 
 //using
 (async () => {
-    let user = await pr.send({apiName: "getUserById", id: 3},data => {
+    let user = await pr.send({apiName: "getUserById", id: 3},data =>{
         console.log('Server >>', data.message);
     });
     //or    
