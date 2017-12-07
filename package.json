@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/bin1357/promise-requester#readme",
   "dependencies": {
-    "chunked_singly_linked_list": "^1.0.0"
+    "chunked-singly-linked-list": "^1.0.0"
   },
   "devDependencies": {
     "socket.io": "^2.0.4",

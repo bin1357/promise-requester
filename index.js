@@ -1,7 +1,7 @@
 /**
  * Created by joni8 on 13.11.2017.
  */
-const Queue = require('chunked_singly_linked_list');
+const Queue = require('chunked-singly-linked-list');
 let timeToClearCallback = 2000;
 let timeTickCleaner = 500;
 let TYPE = {
