@@ -1,6 +1,6 @@
 {
   "name": "promise-requester",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Essence for easy communication between the client and the server",
   "main": "index.js",
   "scripts": {
