@@ -1,36 +1,39 @@
 # promise-requester
 Essence for easy communication between the client and the server
+
 ##with socket.io
+
 ###server
-```ecmascript 6
-const Pr = require('promise-request');
+```javascript
+const Pr = require('promise-requester');
 const api = require('./myapi');
 
 let io = require('socket.io')();
 io.on('connection', function(client){
+    console.log('client connected');
     let pr = new Pr();
 
     //set function send object to client
-    pr.setSender(outData => 
+    pr.setSender(outData =>
         client.emit('from-server',outData));
 
     //receive object from client
     client.on('from-client', pr.getReceiver());
 
     //server request handler
-    requester.setHandler(async (data, callback)=> {
+    pr.setHandler(async (data, callback)=> {
         let {apiName, ...arg} = data;
         let startTime = + new Date();
         callback({message: 'receive message'});
-        
-        if(!api[apiName]) return false;        
+
+        if(!api[apiName]) return false;
         callback({
             message: `method ${apiName} founded,
              run ${apiName}(${JSON.stringify(arg)})`
-            
+
         });
-               
-        let answer = await api[apiName](arg);   
+
+        let answer = await api[apiName](arg);
         callback({
             message: `command "${apiName}(${JSON.stringify(arg)})" 
             return answer before ${+ new Date() - startTime}ms`
@@ -38,29 +41,42 @@ io.on('connection', function(client){
         return answer;
     });
 });
+io.listen(3000);
 ```
+
 ###client
-```ecmascript 6
-const Pr = require('promise-request');
+
+```javascript
+const Pr = require('promise-requester');
 const io = require('socket.io-client')('http://localhost:3000');
 
 let pr = new Pr();
 
-//set function send object to Server
-pr.setSender((data) =>
-    io.emit('from-client',data));
+io.on('connect',function () {
+    console.log('connected');
 
-//receive object from Server
-io.on('from-server', pr.getReceiver());
+    //set function send object to Server
+    pr.setSender((data) => io.emit('from-client',data));
 
-//using
-(async () => {
-    let user = await pr.send({apiName: "getUserById", id: 3},data =>{
-        console.log('Server >>', data.message);
-    });
-    //or    
-    //let user = await pr.send({apiName: "getUserById", id: 3});
-})()
+    //receive object from Server
+    io.on('from-server', pr.getReceiver());
 
+    //using
+    (async () => {
+        let user = await pr.send({
+            apiName: "getUserById", id: 3
+        },data =>{
+            console.log(
+                'Receive in callback from server:',
+                 data.message
+             );
+        });
+        //or
+        //let user = await pr.send({
+        // apiName: "getUserById", id: 3
+        //});
+        console.log('user', user);
+    })();
+});
 ```
 
