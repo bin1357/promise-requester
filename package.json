@@ -1,0 +1,28 @@
+{
+  "name": "promise-requester",
+  "version": "1.0.0",
+  "description": "Essence for easy communication between the client and the server",
+  "main": "index.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bin1357/promise-requester.git"
+  },
+  "keywords": [
+    "async",
+    "request",
+    "communocation",
+    "client-sever"
+  ],
+  "author": "bin1357",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bin1357/promise-requester/issues"
+  },
+  "homepage": "https://github.com/bin1357/promise-requester#readme",
+  "dependencies": {
+    "chunked_singly_linked_list": "^1.0.0"
+  }
+}
