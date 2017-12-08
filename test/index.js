@@ -17,12 +17,12 @@ function runScript(scriptPath, name, color) {
 
 
     name && process.stdout.on('data', buffer => {
-        let message = buffer.toString().slice(0,-1);
+        let message = buffer.toString().slice(0, -1);
         console.log(color, name, message)
     });
 
     process.stderr.on('data', buffer => {
-        let message = buffer.toString().slice(0,-1);
+        let message = buffer.toString().slice(0, -1);
         if (invoked) return;
         invoked = true;
         console.log(color, name, "ERR >>", message);

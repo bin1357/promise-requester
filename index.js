@@ -29,9 +29,11 @@ class PromiseRequester {
     static get timeToClearCallback() {
         return timeToClearCallback;
     };
+
     static get timeTickCleaner() {
         return timeTickCleaner;
     };
+
     static get TYPE() {
         return TYPE;
     };
@@ -44,19 +46,22 @@ class PromiseRequester {
      * @param {boolean} callback
      * @returns {PromiseRequester~TransmitObject}
      */
-    static message(id, data, type, callback=false) {
+    static message(id, data, type, callback = false) {
         return {
             id, data, type, callback,
             timeToClearCallback: PromiseRequester.timeToClearCallback
         };
     };
+
     static messageKeepAlive(id) {
         return PromiseRequester.message(id, {}, PromiseRequester.TYPE.KEEP_ALIVE);
     };
+
     constructor() {
         this.initHandler();
         this.initAnswerListener();
-        this._sendFunction = ()=>{};
+        this._sendFunction = () => {
+        };
     }
 
 
@@ -84,25 +89,25 @@ class PromiseRequester {
      * @private
      */
     async _receiveFunction(_data) {
-        if(_data.type === PromiseRequester.TYPE.REQUEST) {
+        if (_data.type === PromiseRequester.TYPE.REQUEST) {
             let {id, data, timeToClearCallback} = _data;
             try {
-                let answerFromHandlerPromise =  this._handler(data, toCallback => {
-                    let toCallbackMessage  = PromiseRequester.message(id, toCallback,PromiseRequester.TYPE.CALLBACK);
+                let answerFromHandlerPromise = this._handler(data, toCallback => {
+                    let toCallbackMessage = PromiseRequester.message(id, toCallback, PromiseRequester.TYPE.CALLBACK);
                     this._sendFunction(toCallbackMessage);
                 });
-                let keepLive  = setInterval(()=>{
+                let keepLive = setInterval(() => {
                     this._sendFunction(PromiseRequester.messageKeepAlive(id));
-                }, timeToClearCallback/2);
+                }, timeToClearCallback / 2);
                 await answerFromHandlerPromise;
                 clearInterval(keepLive);
-                let answer  = PromiseRequester.message(id, await answerFromHandlerPromise, PromiseRequester.TYPE.ANSWER);
+                let answer = PromiseRequester.message(id, await answerFromHandlerPromise, PromiseRequester.TYPE.ANSWER);
                 this._sendFunction(answer);
-            } catch(err) {
-                console.error('err send from client:',err);
+            } catch (err) {
+                console.error('err send from client:', err);
                 this._sendFunction(err);
             }
-        } else if(
+        } else if (
             _data.type === PromiseRequester.TYPE.ANSWER ||
             _data.type === PromiseRequester.TYPE.CALLBACK ||
             _data.type === PromiseRequester.TYPE.KEEP_ALIVE) {
@@ -120,37 +125,40 @@ class PromiseRequester {
 
     //region handlers
     initHandler() {
-        this._handler = () => {};
+        this._handler = () => {
+        };
     }
+
     setHandler(handler) {
         this._handler = handler;
     }
+
     //endregion
 
 
     //region subscribe
     initAnswerListener() {
         this._subscribers = new Queue(128);
-        this._generatorNextId = (function* () {
-            for(let i = 0;;) yield ++i;
+        this._generatorNextId = (function*() {
+            for (let i = 0; ;) yield ++i;
         })();
         this._getNextId = () => this._generatorNextId.next().value;
 
-        setInterval(()=> {
-            while(
+        setInterval(() => {
+            while (
             !this._subscribers.isEmpty()
-            && + new Date() - this._subscribers.seek().time > PromiseRequester.timeToClearCallback
+            && +new Date() - this._subscribers.seek().time > PromiseRequester.timeToClearCallback
                 ) {
                 let deleteSubscriber = this._subscribers.pop();
                 if (deleteSubscriber.extend) {
                     deleteSubscriber.extend = false;
-                    deleteSubscriber.time = + new Date();
+                    deleteSubscriber.time = +new Date();
                     this._subscribers.push(deleteSubscriber)
                 } else {
                     deleteSubscriber.timeout();
                 }
             }
-        },PromiseRequester.timeTickCleaner);
+        }, PromiseRequester.timeTickCleaner);
 
     }
 
@@ -167,8 +175,9 @@ class PromiseRequester {
      * @param timeout
      * @returns {{time: number, callback: *, timeout: (function())}}
      */
-    subscribe(callback, timeout = ()=>{}) {
-        let time = + new Date();
+    subscribe(callback, timeout = () => {
+    }) {
+        let time = +new Date();
         let subscriber = {
             time,
             callback,
@@ -177,6 +186,7 @@ class PromiseRequester {
         this._subscribers.push(subscriber);
         return subscriber;
     }
+
     //endregion
 
     /**
@@ -188,22 +198,25 @@ class PromiseRequester {
      * @param {PromiseRequester~SendCallback} callback
      * @returns {Promise<Data>}
      */
-    async send(data, callback = ()=>{}) {
+    async send(data, callback = () => {
+    }) {
         let id = this._getNextId();
         let message = PromiseRequester.message(
             id, data, PromiseRequester.TYPE.REQUEST, !!callback
         );
-        let answer  = new Promise((res,err)=>{
+        let answer = new Promise((res, err) => {
             let subscriber = this.subscribe(
                 _data => {
                     let {data, type} = _data;
-                    if(_data.id === id) {
-                        if(type === PromiseRequester.TYPE.ANSWER) {
-                            subscriber.callback = ()=>{};
-                            subscriber.timeout = ()=>{};
-                            subscriber.time = + new Date() - PromiseRequester.timeToClearCallback;
+                    if (_data.id === id) {
+                        if (type === PromiseRequester.TYPE.ANSWER) {
+                            subscriber.callback = () => {
+                            };
+                            subscriber.timeout = () => {
+                            };
+                            subscriber.time = +new Date() - PromiseRequester.timeToClearCallback;
                             res(data);
-                        } else if(type === PromiseRequester.TYPE.CALLBACK) {
+                        } else if (type === PromiseRequester.TYPE.CALLBACK) {
                             callback(data);
                         } else if (type === PromiseRequester.TYPE.KEEP_ALIVE) {
                             subscriber.extend = true;
@@ -218,7 +231,6 @@ class PromiseRequester {
 
         return answer;
     }
-
 
 
 }
