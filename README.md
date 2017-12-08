@@ -1,9 +1,9 @@
 # promise-requester
 Essence for easy communication between the client and the server
 
-##with socket.io
+## with socket.io
 
-###server
+### server
 ```javascript
 const Pr = require('promise-requester');
 const api = require('./myapi');
@@ -44,7 +44,7 @@ io.on('connection', function (client) {
 io.listen(3000);
 ```
 
-###client
+### client
 
 ```javascript
 const Pr = require('promise-requester');
