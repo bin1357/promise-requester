@@ -1,10 +1,19 @@
 # promise-requester
 Essence for easy communication between the client and the server
 
-## with socket.io
+## Install
 
-### server
-```javascript
+### Node.js 
+```bash
+npm install --save promise-request
+```
+### Browser
+use [Browserify](http://browserify.org/)
+
+## Example with socket.io
+
+### Server
+```js
 const Pr = require('promise-requester');
 const api = require('./myapi');
 
@@ -44,9 +53,9 @@ io.on('connection', function (client) {
 io.listen(3000);
 ```
 
-### client
+### Client
 
-```javascript
+```js
 const Pr = require('promise-requester');
 
 const address = 'http://localhost:3000';
@@ -72,11 +81,16 @@ io.on('connect', function () {
             data.message
         ));
         //or without callback
-        //let user = await pr.send({
-        // apiName: "getUserById", id: 3
-        //});
+        /*
+        let user = await pr.send({
+         apiName: "getUserById", id: 3
+        });
+        */
         console.log('user', user);
     })();
 });
 ```
+
+## Links
+[GitHub](https://github.com/bin1357/promise-requester), [NPM](https://www.npmjs.com/package/promise-requester)
 
